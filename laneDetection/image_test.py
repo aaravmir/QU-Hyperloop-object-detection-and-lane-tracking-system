@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+#No comments because i didnt feel like it. jk jk find them in the lanes.py file
 def canny(lane_image):
     gray = cv2.cvtColor(lane_image, cv2.COLOR_RGB2GRAY)
     blur = np.copy(gray)
