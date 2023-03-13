@@ -1,1 +1,7 @@
 LANE DETECTION CODING
+Main file is detection. There is a huge block commented out in the end, just ignore that lol.
+There are three comments in detection.py, those are the only three values that change when switching from video to video
+
+lanes.py contain a lot (and i mean a lot) of comments, if you want to understand the program read that 
+Test image 2, 3 correspond to test videos 2, 3
+Mask sizes are given just in case you want to switch between the videos
