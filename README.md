@@ -1,7 +1,13 @@
 # Software Backend
 
-# Object Detection 
-Almost Functional
+**Object Detection**
 
-# Lane Detection
-Functional and integrated
+Functional 🗴
+
+Integrated 🗴
+
+**Lane Detection**
+
+Functional ✓
+
+Integrated ✓
