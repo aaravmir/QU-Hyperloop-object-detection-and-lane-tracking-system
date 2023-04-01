@@ -2,7 +2,7 @@
 
 **Object Detection**
 
-Functional 🗴
+Functional ✓ (kindof)
 
 Integrated 🗴
 
