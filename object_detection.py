@@ -88,7 +88,7 @@ def object_detect(imported_frame):
     # Defining loop for catching frames
     while True:
         # Capturing frame-by-frame from camera
-        frame = imported_frame
+        _, frame = imported_frame.read()
 
         # Getting spatial dimensions of the frame
         # we do it only once from the very beginning
