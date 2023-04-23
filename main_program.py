@@ -230,7 +230,6 @@ def video_feed():
     # calls lane detection file and inputs current video capture
     try:
         #standard lane detection input
-        critical = False
         lane_frame, is_obstructed = detection.videoCapture(cap)
         toggle_text(pod_warning_message, False)
         toggle_text(status_text, True)
@@ -238,12 +237,17 @@ def video_feed():
         canvas.itemconfig(warning_2, state="hidden")
         # displaying alert message if something is obstructing the lane
         if is_obstructed is True:
+            critical = True
             toggle_text(status_text, False)
+            toggle_text(object_alert_message, False)
             toggle_text(object_warning_message, True)
-            canvas.itemconfig(alert_1, state="normal")
-            canvas.itemconfig(alert_2, state="normal")
+            canvas.itemconfig(warning_1, state="normal")
+            canvas.itemconfig(warning_2, state="normal")
+            canvas.itemconfig(alert_1, state="hidden")
+            canvas.itemconfig(alert_2, state="hidden")
         #else, displays no alert message, pod resumes as normal
         else:
+            critical = False
             toggle_text(object_warning_message, False)
             toggle_text(status_text, True)
             canvas.itemconfig(alert_1, state="hidden")
@@ -252,10 +256,14 @@ def video_feed():
         #turns on critical error message if lane cannot be detected
         critical = True
         ret, lane_frame = cap.read()
+        toggle_text(object_warning_message)
         toggle_text(pod_warning_message, True)
         toggle_text(status_text, False)
+        toggle_text(object_alert_message, False)
         canvas.itemconfig(warning_1, state="normal")
         canvas.itemconfig(warning_2, state="normal")
+        canvas.itemconfig(alert_1, state="hidden")
+        canvas.itemconfig(alert_2, state="hidden")
 
     try:
         #calling object detection
@@ -278,7 +286,7 @@ def video_feed():
             ##toggling object detection text
             if critical is False:
                 toggle_text(status_text, False)
-                toggle_text(object_warning_message, True)
+                toggle_text(object_alert_message, True)
                 canvas.itemconfig(alert_1, state="normal")
                 canvas.itemconfig(alert_2, state="normal")
             ##placing object detection text
@@ -300,18 +308,22 @@ def video_feed():
             toggle_text(status_text, True)
             canvas.itemconfig(alert_1, state="hidden")
             canvas.itemconfig(alert_2, state="hidden")
-
+    ##cannot detect an object
     except:
-        ##cannot detect an object
         converted_image_object = lane_frame
         toggle_text(object_warning_message, False)
-        toggle_text(status_text, True)
         canvas.itemconfig(alert_1, state="hidden")
         canvas.itemconfig(alert_2, state="hidden")
+        if critical is False:
+            toggle_text(status_text, True)
 
     #converts the images to IRL colors, BGR spectrum to RGB
-    converted_image_object = cv2.cvtColor(object_frame, cv2.COLOR_BGR2RGB)
-    converted_image_lane = cv2.cvtColor(lane_frame, cv2.COLOR_BGR2RGB)
+    try:
+        converted_image_object = cv2.cvtColor(object_frame, cv2.COLOR_BGR2RGB)
+        converted_image_lane = cv2.cvtColor(lane_frame, cv2.COLOR_BGR2RGB)
+    except:
+        video_feed()
+        return
     #resizes images regardless of webcam resolution
     resized_image_object = cv2.resize(converted_image_object, (video_width, video_height))
     resized_image_lane = cv2.resize(converted_image_lane, (video_width, video_height))
