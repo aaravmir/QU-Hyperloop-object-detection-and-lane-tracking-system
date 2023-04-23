@@ -1,0 +1,5 @@
+Test 1 - [(200, height), (1100, height), (550, 250)]
+Test 2 - [(150, height), (655, 275), (300, 165)]
+Test 3 - [(225, height), (460, height), (350, 100)]    |    3 blur, 15/40   |   14.72
+Test 4 - [(0, 325), (130, height), (370, 192), (500, height), (640, 325), (370, 145)]     |     
+2 blur, 1/2, set threshold to 150
