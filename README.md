@@ -1,6 +1,7 @@
 # Current Status
 2023-04-22
 - Object Detection Integrated
+
 2023-04-01
 - Updated GUI to be resizeable
 - Updated error message processing
