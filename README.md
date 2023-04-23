@@ -1,6 +1,8 @@
 # Current Status
 2023-04-22
 - Object detection integrated
+- Fixed some message errors
+- Image super imposing implemented
 
 2023-04-01
 - Updated GUI to be resizeable
