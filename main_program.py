@@ -230,7 +230,8 @@ def video_feed():
     # calls lane detection file and inputs current video capture
     try:
         #standard lane detection input
-        detection_frame, is_obstructed = detection.videoCapture(cap)
+        critical = False
+        lane_frame, is_obstructed = detection.videoCapture(cap)
         toggle_text(pod_warning_message, False)
         toggle_text(status_text, True)
         canvas.itemconfig(warning_1, state="hidden")
@@ -249,23 +250,19 @@ def video_feed():
             canvas.itemconfig(alert_2, state="hidden")
     except:
         #turns on critical error message if lane cannot be detected
-        ret, detection_frame = cap.read()
+        critical = True
+        ret, lane_frame = cap.read()
         toggle_text(pod_warning_message, True)
         toggle_text(status_text, False)
         canvas.itemconfig(warning_1, state="normal")
         canvas.itemconfig(warning_2, state="normal")
+
     try:
-        ##sending lane detection frame through object detection code
-        final_frame, object_info = object_detect(detection_frame)
-        toggle_text(pod_warning_message, False)
-        canvas.itemconfig(warning_1, state="hidden")
-        canvas.itemconfig(warning_2, state="hidden")
-        toggle_text(status_text, True)
-        toggle_text(object_warning_message, False)
-        canvas.itemconfig(alert_1, state="hidden")
-        canvas.itemconfig(alert_2, state="hidden")
+        #calling object detection
+        object_frame, object_info = object_detect(cap)
+        #detects if object was returned
         if object_info != "":
-                ## sorting information
+            #sorting information
             object_name = object_info.split()[0].replace(":", "").capitalize()
             percent_accuracy = float((object_info.split()[1])) * 100
             date = str(datetime.datetime.now().replace(microsecond=0))
@@ -279,11 +276,12 @@ def video_feed():
                 count = 210
                 canvas.delete('object_text')
             ##toggling object detection text
-            toggle_text(status_text, False)
-            toggle_text(object_warning_message, True)
-            canvas.itemconfig(alert_1, state="normal")
-            canvas.itemconfig(alert_2, state="normal")
-            ##placing object name on dashboard
+            if critical is False:
+                toggle_text(status_text, False)
+                toggle_text(object_warning_message, True)
+                canvas.itemconfig(alert_1, state="normal")
+                canvas.itemconfig(alert_2, state="normal")
+            ##placing object detection text
             canvas.create_text(
                 scale_value(1362.0),
                 scale_value(count),
@@ -296,19 +294,32 @@ def video_feed():
             ##saving data to a log file
             with open(f'logs/{file_date}.txt', 'a') as f:
                 f.write(f'{object_text} \n')
+        ##if object detection does not have any information, toggle messages
+        else:
+            toggle_text(object_warning_message, False)
+            toggle_text(status_text, True)
+            canvas.itemconfig(alert_1, state="hidden")
+            canvas.itemconfig(alert_2, state="hidden")
+
     except:
-        final_frame = detection_frame
-        toggle_text(pod_warning_message, True)
-        toggle_text(status_text, False)
-        canvas.itemconfig(warning_1, state="normal")
-        canvas.itemconfig(warning_2, state="normal")
-    # converts the image to IRL colors, BGR spectrum to RGB
-    converted_image = cv2.cvtColor(final_frame, cv2.COLOR_BGR2RGB)
-    # resizes image regardless of webcam resolution
-    resized_image = cv2.resize(converted_image, (video_width,video_height))
-    # puts resized image into an array
-    capture_image = Image.fromarray(resized_image)
-    # creates a tkinter image with array
+        ##cannot detect an object
+        converted_image_object = lane_frame
+        toggle_text(object_warning_message, False)
+        toggle_text(status_text, True)
+        canvas.itemconfig(alert_1, state="hidden")
+        canvas.itemconfig(alert_2, state="hidden")
+
+    #converts the images to IRL colors, BGR spectrum to RGB
+    converted_image_object = cv2.cvtColor(object_frame, cv2.COLOR_BGR2RGB)
+    converted_image_lane = cv2.cvtColor(lane_frame, cv2.COLOR_BGR2RGB)
+    #resizes images regardless of webcam resolution
+    resized_image_object = cv2.resize(converted_image_object, (video_width, video_height))
+    resized_image_lane = cv2.resize(converted_image_lane, (video_width, video_height))
+    #super imposing images
+    blended_image = cv2.addWeighted(resized_image_lane, 1, resized_image_object, 1, 1)
+    #creating image from blended image array
+    capture_image = Image.fromarray(blended_image)
+    # creates a tkinter image with img
     photo_image = ImageTk.PhotoImage(image=capture_image)
     # inserts tkinter image into widget
     video_widget.imgtk = photo_image
