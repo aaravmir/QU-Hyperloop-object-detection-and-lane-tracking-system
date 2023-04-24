@@ -86,7 +86,7 @@ if __name__ == '__main__':
     colours = np.random.randint(0, 255, size=(len(labels), 3), dtype='uint8')
 
     """
-    FOR MORE INFORMATION ON OBJECT DETECTION, CHECK YOLO-3-CAMERA.py IN "object_detection_sample_code/YOLO-3-OpenCV"
+    FOR MORE INFORMATION ON OBJECT DETECTION, CHECK YOLO-3-CAMERA.py IN "object_detection/YOLO-3-OpenCV"
     """
 
     #setting the dictionary to the current folder
