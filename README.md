@@ -1,5 +1,6 @@
 # Current Status
 2023-04-24
+- Compabitability with CUDA OpenCV
 - Object detection framerate fixed
 - Toggling message bugs fixed
 
