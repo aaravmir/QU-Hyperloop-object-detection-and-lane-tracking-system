@@ -76,8 +76,11 @@ if __name__ == '__main__':
         labels = [line.strip() for line in f]
     network = cv2.dnn.readNetFromDarknet('object_detection/YOLO-3-OpenCV/yolo-coco-data/yolov4.cfg',
                                          'object_detection/YOLO-3-OpenCV/yolo-coco-data/yolov4.weights')
+    """
+    ENABLE THIS IF YOU HAVE CUDA OPENCV BUILT
     network.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
     network.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+    """
     layers_names_all = network.getLayerNames()
     layers_names_output = \
         [layers_names_all[i - 1] for i in network.getUnconnectedOutLayers()]
