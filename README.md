@@ -2,9 +2,9 @@
 
 **Object Detection**
 
-Functional ✓ (kindof)
+Functional ✓ 
 
-Integrated 🗴
+Integrated ✓ 
 
 **Lane Detection**
 
