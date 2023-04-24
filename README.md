@@ -1,4 +1,8 @@
 # Current Status
+2023-04-24
+- Object detection framerate fixed
+- Toggling message bugs fixed
+
 2023-04-22
 - Object detection integrated
 - Fixed some message errors
