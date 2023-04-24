@@ -7,7 +7,7 @@ Also, a lot of this stuff can be made into classes and objects but we are C prog
 
 def object_detect(imported_frame):
     """
-    FOR MORE INFORMATION ON OBJECT DETECTION, CHECK YOLO-3-CAMERA.py IN "object_detection_sample_code/YOLO-3-OpenCV"
+    FOR MORE INFORMATION ON OBJECT DETECTION, CHECK YOLO-3-CAMERA.py IN "object_detection/YOLO-3-OpenCV"
     """
     h, w = None, None
     while True:
@@ -72,10 +72,10 @@ if __name__ == '__main__':
         start = time.time()
 
     #intitializing object detection network
-    with open('yolo-coco-data/coco.names') as f:
+    with open('object_detection/YOLO-3-OpenCV/yolo-coco-data/coco.names') as f:
         labels = [line.strip() for line in f]
-    network = cv2.dnn.readNetFromDarknet('yolo-coco-data/yolov4.cfg',
-                                         'yolo-coco-data/yolov4.weights')
+    network = cv2.dnn.readNetFromDarknet('object_detection/YOLO-3-OpenCV/yolo-coco-data/yolov4.cfg',
+                                         'object_detection/YOLO-3-OpenCV/yolo-coco-data/yolov4.weights')
     network.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
     network.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
     layers_names_all = network.getLayerNames()
@@ -290,7 +290,7 @@ if __name__ == '__main__':
     canvas.itemconfig(warning_2, state = "hidden")
 
     #capturing camera video, change brackets to (0) for camera feed or ("videofilename.mp4") for pre-recorded video
-    cap = cv2.VideoCapture("test2.mp4")
+    cap = cv2.VideoCapture(0)
 
     #creating widget for video
     video_widget = Label(window)
