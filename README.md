@@ -1,4 +1,8 @@
-# Current Status
+# Current Status: COMPLETE
+2023-04-25
+- Added image storage from FA advice
+- Added global variables to detection to easily adjust blur, thresholds etc.
+
 2023-04-24
 - Compabitability with CUDA OpenCV
 - Object detection framerate fixed
