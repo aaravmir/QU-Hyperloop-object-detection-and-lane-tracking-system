@@ -373,12 +373,12 @@ if __name__ == '__main__':
                     canvas.itemconfig(alert_1, state="normal")
                     canvas.itemconfig(alert_2, state="normal")
 
-                #timer w/ 3 second intervals to make sure right hand side isn't crowded
+                #timer w/ intervals to make sure right hand side isn't crowded
                 global start
                 end = time.time()
 
                 #INCREASE OR DECREASE THIS VALUE TO CHANGE DATA INTERVAL
-                if (end - start) > 0.1:
+                if (end - start) > 1:
                     #resetting time
                     start = time.time()
 
