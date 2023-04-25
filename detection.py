@@ -1,14 +1,32 @@
 import cv2
 import numpy as np
 
+#Change this depending on how far you want the lane to go, further -> lower
+detection_range = (1/2)
+
+mask_polygon= np.array([
+#Triangle. (left point), (Right point), (Top point). Height stands for bottom y value, Y axis is inversed
+[(0, 325), (130, 360), (370, 192), (500, 360), (640, 325), (370, 145)]
+])
+
+#This controls how much blur is applied to the image. Higher->More blur
+blur_amount = 2
+
+#These control the thresholds of the canny function. Threshold to be adjusted depending on the amount of noise in the video
+canny_threshold_1 = 50
+canny_threshold_2 = 150
+
+#This controls the threshold of the HoughLinesP function. Threshold to be adjusted if the program isnt able to stay consistant
+# with detecting the lanes
+houghlines_threshold = 150
+
 def make_coordinates(image, line_parameters):
     try:
         slope, intercept = line_parameters
     except TypeError:
         slope, intercept = 0.001, 0
     y1 = image.shape[0]
-    #Change this depending on how far you want the lane to go, further -> lower
-    y2 = int(y1 * (12/20))
+    y2 = int(y1 * (detection_range))
     x1 = int((y1 - intercept)/slope)
     x2 = int((y2 - intercept)/slope)
     return np.array([x1, y1, x2, y2])
@@ -38,9 +56,9 @@ def canny(lane_image):
     gray = cv2.cvtColor(lane_image, cv2.COLOR_RGB2GRAY)
     blur = np.copy(gray)
     #Change this if the picture is too noisy / there are too many edges
-    for x in range(2):
+    for x in range(blur_amount):
         blur = cv2.GaussianBlur(blur, (5, 5), 0)
-    canny = cv2.Canny(blur, 50, 150)
+    canny = cv2.Canny(blur, canny_threshold_1, canny_threshold_2)
     return canny
 
 
@@ -54,13 +72,8 @@ def display_lines(image, lines):
 
 
 def region_of_interest(image):
-    height = image.shape [0]
-    polygons = np.array([
-    #Triangle. (left point), (Right point), (Top point). Height stands for bottom y value, Y axis is inversed
-    [(150, height), (655, 275), (300, 165)]
-    ])
     mask = np.zeros_like(image)
-    cv2.fillPoly(mask, polygons, 255)
+    cv2.fillPoly(mask, mask_polygon, 255)
     masked_image = cv2.bitwise_and(image, mask)
     return masked_image
 
@@ -69,7 +82,7 @@ def videoCapture(cap):
         ret, frame = cap.read()
         edge_image = canny(frame)
         masked_image = region_of_interest(edge_image)
-        lines = cv2.HoughLinesP(masked_image, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
+        lines = cv2.HoughLinesP(masked_image, 2, np.pi/180, houghlines_threshold, np.array([]), minLineLength=40, maxLineGap=5)
         if lines is None:
             is_obstructed = True
             line_image = frame
@@ -77,4 +90,4 @@ def videoCapture(cap):
             is_obstructed = False
             averaged_lines = average_slope_intercept(frame, lines)
             line_image = display_lines(frame, averaged_lines)
-        return line_image, is_obstructed
+        return line_image, is_obstructed  
