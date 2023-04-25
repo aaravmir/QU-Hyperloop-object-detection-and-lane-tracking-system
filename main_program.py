@@ -76,11 +76,13 @@ if __name__ == '__main__':
         labels = [line.strip() for line in f]
     network = cv2.dnn.readNetFromDarknet('object_detection/YOLO-3-OpenCV/yolo-coco-data/yolov4.cfg',
                                          'object_detection/YOLO-3-OpenCV/yolo-coco-data/yolov4.weights')
+
     """
-    ENABLE THIS IF YOU HAVE CUDA OPENCV BUILT
+    ENABLE THIS IF YOU HAVE OPENCV BUILT WITH CUDA
     network.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
     network.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
     """
+
     layers_names_all = network.getLayerNames()
     layers_names_output = \
         [layers_names_all[i - 1] for i in network.getUnconnectedOutLayers()]
@@ -89,7 +91,7 @@ if __name__ == '__main__':
     colours = np.random.randint(0, 255, size=(len(labels), 3), dtype='uint8')
 
     """
-    FOR MORE INFORMATION ON OBJECT DETECTION, CHECK YOLO-3-CAMERA.py IN "object_detection/YOLO-3-OpenCV"
+    FOR MORE INFORMATION ON OBJECT DETECTION, CHECK YOLO-3-CAMERA.py IN "object_detection_sample_code/YOLO-3-OpenCV"
     """
 
     #setting the dictionary to the current folder
@@ -356,6 +358,8 @@ if __name__ == '__main__':
             #detects if object was returned
             if object_info != "":
                 #sorting information
+                global image_storage
+                image_storage = True
                 object_name = object_info.split()[0].replace(":", "").capitalize()
                 percent_accuracy = float((object_info.split()[1])) * 100
                 date = str(datetime.datetime.now().replace(microsecond=0))
@@ -374,7 +378,7 @@ if __name__ == '__main__':
                 end = time.time()
 
                 #INCREASE OR DECREASE THIS VALUE TO CHANGE DATA INTERVAL
-                if (end - start) > 3:
+                if (end - start) > 0.1:
                     #resetting time
                     start = time.time()
 
@@ -456,7 +460,15 @@ if __name__ == '__main__':
         video_widget.imgtk = photo_image
         video_widget.configure(borderwidth=0, image=photo_image)
 
-        # recalls function after 16ms (matches 60fps, approx 16ms per frame) to update videofeed, change value to match any camera framerate
+        #logs object detection image
+        if image_storage == True:
+            #had to replace b/c files cannot have ':'
+            date_list = date.replace(":", "-")
+            date_update = date_list.split()
+            cv2.imwrite(f'image_logs/{date_update[0]}_{date_update[1]}_{object_name}.png', object_frame)
+            image_storage = False
+
+        #recalls function after 16ms (matches 60fps, approx 16ms per frame) to update videofeed, change value to match any camera framerate
         video_widget.after(16, video_feed)
 
     video_feed()
